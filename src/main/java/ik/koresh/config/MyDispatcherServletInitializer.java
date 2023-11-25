@@ -1,12 +1,16 @@
 package ik.koresh.config;
 
 
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import java.util.EnumSet;
 
 public class MyDispatcherServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
@@ -21,14 +25,14 @@ public class MyDispatcherServletInitializer extends AbstractAnnotationConfigDisp
 
     @Override
     protected String[] getServletMappings() {
-        return new String[] {"/"};
+        return new String[]{"/"};
     }
 
 
     @Override
     public void onStartup(ServletContext aServletContext) throws SecurityException, ServletException {
         super.onStartup(aServletContext);
-//        registerCharacterEncodingFilter(aServletContext);
+        registerCharacterEncodingFilter(aServletContext);
         registerHiddenFieldFilter(aServletContext);
     }
     private void registerHiddenFieldFilter(ServletContext aContext){
@@ -37,14 +41,14 @@ public class MyDispatcherServletInitializer extends AbstractAnnotationConfigDisp
         //  HiddenHttpMethodFilter - смотрит на скрытый "_method" в POST запросах, "/*"-указывает что будет работать для всех адресов приложения
     }
 
-//    private void registerCharacterEncodingFilter(ServletContext aContext){
-//        EnumSet<DispatcherType> dispatcherTypes = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD);
-//
-//        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
-//        characterEncodingFilter.setEncoding("UTF-8");
-//        characterEncodingFilter.setForceEncoding(true);
-//
-//        FilterRegistration.Dynamic characterEncoding = aContext.addFilter("characterEncoding", characterEncodingFilter);
-//        characterEncoding.addMappingForUrlPatterns(dispatcherTypes, true, "/*");
-//    }
+    private void registerCharacterEncodingFilter(ServletContext aContext){
+        EnumSet<DispatcherType> dispatcherTypes = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD);
+
+        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+        characterEncodingFilter.setEncoding("UTF-8");
+        characterEncodingFilter.setForceEncoding(true);
+
+        FilterRegistration.Dynamic characterEncoding = aContext.addFilter("characterEncoding", characterEncodingFilter);
+        characterEncoding.addMappingForUrlPatterns(dispatcherTypes, true, "/*");
+    }
 }

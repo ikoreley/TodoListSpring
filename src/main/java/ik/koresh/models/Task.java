@@ -19,14 +19,15 @@ public class Task {
     private String description;
 
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
     @Min(value = 0, message = "Age should be greater than 0")
     @Column(name = "deadline")
     private int deadline;
 
     public Task() {}
 
-    public Task(String description, String  status, int deadline) {
+    public Task(String description, Status  status, int deadline) {
         this.description = description;
         this.status = status;
         this.deadline = deadline;
@@ -48,11 +49,11 @@ public class Task {
         this.description = description;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
     public int getDeadline() {

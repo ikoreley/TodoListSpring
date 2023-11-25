@@ -1,7 +1,9 @@
 package ik.koresh.controllers;
 
-import ik.koresh.dao.TaskDAO;
+
 import ik.koresh.models.Task;
+import ik.koresh.services.TasksService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,27 +16,29 @@ import javax.validation.Valid;
 @RequestMapping("/todolist")
 public class TasksController {
 
-    private final TaskDAO taskDAO;
+    private final TasksService tasksService;
 
-    public TasksController(TaskDAO taskDAO) {
-        this.taskDAO = taskDAO;
+    @Autowired
+    public TasksController(TasksService tasksService) {
+        this.tasksService = tasksService;
     }
+
 
     @GetMapping()
     public String index(Model model){
-        model.addAttribute("todolist", taskDAO.index());
+        model.addAttribute("todolist", tasksService.findAll());
         return "todolist/index";
     }
 
     @GetMapping("/indexTemp")
     public String indexHeap(Model model){
-        model.addAttribute("todolist", taskDAO.index());
+        model.addAttribute("todolist", tasksService.findAll());
         return "todolist/indexTemp";
     }
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model){
-        model.addAttribute("task", taskDAO.show(id));
+        model.addAttribute("task", tasksService.findOne(id));
         return "todolist/show";
     }
 
@@ -50,13 +54,13 @@ public class TasksController {
         if (bindingResult.hasErrors())
             return "todolist/new";
 
-        taskDAO.save(task);
+        tasksService.save(task);
         return "redirect:/todolist";
     }
 
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id){
-        model.addAttribute("task", taskDAO.show(id));
+        model.addAttribute("task", tasksService.findOne(id));
         return "todolist/edit";
     }
 
@@ -67,13 +71,13 @@ public class TasksController {
         if (bindingResult.hasErrors())
             return "todolist/edit";
 
-        taskDAO.update(id, task);
+        tasksService.update(id, task);
         return "redirect:/todolist";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id){
-        taskDAO.delete(id);
+        tasksService.delete(id);
         return "redirect:/todolist";
     }
 
